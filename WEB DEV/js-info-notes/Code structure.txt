@@ -1,0 +1,30 @@
+This would also work:
+
+alert('Hello')
+alert('World')
+
+Here, JavaScript interprets the line break as an “implicit” semicolon. This is called an automatic semicolon insertion.
+
+But there are situations where JavaScript “fails” to assume a semicolon where it is really needed.
+
+alert("Hello")
+
+[1, 2].forEach(alert);
+
+The difference compared to the code above is only one character: the semicolon at the end of the first line is gone.
+If we run this code, only the first Hello shows (and there’s an error, you may need to open the console to see it). There are no numbers any more.
+That’s because JavaScript does not assume a semicolon before square brackets [...]. So, the code in the last example is treated as a single statement.
+
+Here’s how the engine sees it:
+
+alert("Hello")[1, 2].forEach(alert);
+
+
+Please, don’t hesitate to comment your code.
+
+Comments increase the overall code footprint, but that’s not a problem at all. 
+There are many tools which minify code before publishing to a production server. 
+They remove comments, so they don’t appear in the working scripts. 
+Therefore, comments do not have negative effects on production at all.
+
+Ctrl+/ hotkey for a single-line comment and something like Ctrl+Shift+/ – for multiline comments 
