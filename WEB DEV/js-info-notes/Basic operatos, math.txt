@@ -1,0 +1,21 @@
+let apples = "2";
+let oranges = "3";
+
+// both values converted to numbers before the binary plus
+alert( +apples + +oranges ); // 5
+
+unary pluses are applied first, they convert strings to numbers, and then the binary plus sums them up.
+
+
+Precedence	Name	          Sign
+…	        …	…
+14	        unary plus	       +
+14	        unary negation	   -
+13	        exponentiation	   **
+12	        multiplication	   *
+12	        division	       /
+11	        addition	       +
+11	        subtraction	       -
+…	        …	…       
+2	        assignment	       =
+…	        …	…       
