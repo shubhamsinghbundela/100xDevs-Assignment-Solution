@@ -1,0 +1,126 @@
+1. Basic Syntax of fetch() - fetch(url, options)
+2. 
+
+| Parameter | Type | Required | Description           |
+| --------- | -----| -------- | --------------------- |
+| url     | string | ✅ Yes   | API / endpoint URL    |
+| options | object | ❌ No    | Request configuration |
+
+1️⃣ Simplest Syntax (GET request)
+
+fetch("https://api.example.com/data");
+
+Default behavior:
+
+- Method → GET
+- No body
+- No custom headers
+
+2️⃣ Syntax with .then()
+
+fetch(url, options)
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error(error));
+
+3️⃣ Syntax with async/await
+
+const response = await fetch(url, options);
+const data = await response.json();
+
+4️⃣ Full Options Syntax
+
+fetch(url, {
+  method: "POST",          // HTTP method
+  headers: {               // Request headers
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({   // Request body
+    key: "value",
+  }),
+  mode: "cors",            // CORS mode
+  credentials: "include",  // Cookies handling
+  cache: "no-cache",       // Cache control
+  redirect: "follow",      // Redirect handling
+  signal: controller.signal // Abort request
+});
+
+Q: When we use options object in fetch()?
+
+Sol: when I want to customize the request beyond the default GET call.
+
+1️⃣ When sending data to server (POST / PUT / PATCH)
+
+GET requests don’t send body, but POST/PUT do — so options are needed.
+
+fetch("/api/users", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    name: "Shubham",
+  }),
+});
+
+2️⃣ When sending headers
+Default method = GET.
+
+fetch("/secure", {
+  headers: {
+    Authorization: "Bearer token",
+  },
+});
+
+Q: Why do we send body as JSON.stringify() instead of sending object directly?
+
+Because HTTP request body only supports text/binary data, not JavaScript objects.
+
+So we convert JS object → JSON string using:
+- JSON.stringify()
+
+🧠 Think of it like language translation
+- JavaScript object → Browser language
+- JSON string → Internet/server language
+
+1️⃣ What happens if you DON’T stringify?
+
+fetch("/api", {
+  method: "POST",
+  body: { name: "Shubham" }, // ❌ Wrong
+});
+
+Internally browser converts object → string like:
+
+[object Object] -> Server receives garbage data ❌
+
+2️⃣ Correct way
+
+fetch("/api", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    name: "Shubham",
+  }),
+});
+
+Now request body becomes:
+
+{"name":"Shubham"}
+
+Server understands this ✅
+
+3️⃣ Why JSON specifically?
+
+Because JSON is:
+
+- Text-based
+- Language independent
+- Lightweight
+- Easy to parse
+
+Every backend understands JSON:
+- Node → JSON.parse()
+- Python → json.loads()
