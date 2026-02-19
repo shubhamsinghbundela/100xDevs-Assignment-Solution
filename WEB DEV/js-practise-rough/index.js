@@ -1,20 +1,21 @@
-function fetchWithTimeout(url, ms, callback) {
-    let output = new Promise((resolve, reject)=>{
-        fetch(url, (err,data)=>{
-            if(err){
-                reject("Request Timed Out")
-            }else{
-                resolve(data);
-            }
-        })
-    },ms)
-    return output.then((data)=>callback(null,data)).catch((err)=>callback(err))
+function rejectAfter(ms, callback) {
+    let promise = new Promise((resolve, reject)=>{
+        setTimeout(()=>{
+            let err={};
+            err.message=`Rejected after ${ms}ms`
+            reject(err);
+        },ms)
+    })
+    let output = promise
+                    .then(()=>callback(null,data))
+                    .catch((err)=>{
+                        console.log(err);
+                        callback(err,null)
+                    })
+    return output
 }
 
-fetchWithTimeout("url", 100, (err, result) => {
-    if(err){
-        console.log(err);
-    }else{
-        console.log(data)
-    }
-})
+let a =  rejectAfter(100, (err, result) => {
+    console.log(err)
+ })
+console.log(a);
