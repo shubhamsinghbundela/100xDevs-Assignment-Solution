@@ -1,21 +1,12 @@
-function rejectAfter(ms, callback) {
-    let promise = new Promise((resolve, reject)=>{
-        setTimeout(()=>{
-            let err={};
-            err.message=`Rejected after ${ms}ms`
-            reject(err);
-        },ms)
-    })
-    let output = promise
-                    .then(()=>callback(null,data))
-                    .catch((err)=>{
-                        console.log(err);
-                        callback(err,null)
-                    })
-    return output
+function sleep(millis, callback) {
+    return new Promise(resolve => setTimeout(resolve, millis)).then(callback);
 }
 
-let a =  rejectAfter(100, (err, result) => {
-    console.log(err)
- })
-console.log(a);
+const start = Date.now();
+const duration = 100;
+
+sleep(duration, () => {
+    console.log('11');
+    const diff = Date.now() - start;
+    console.log(diff==duration);
+})
