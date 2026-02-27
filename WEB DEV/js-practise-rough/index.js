@@ -1,12 +1,17 @@
-function sleep(millis, callback) {
-    return new Promise(resolve => setTimeout(resolve, millis)).then(callback);
+let results = [];
+let limit = 2;
+let items=[2,10,2]
+const worker = (delay, cb) => setTimeout(() => cb(null, `Finished ${delay}`), delay);
+
+for (let i = 0; i <= limit; i++) {
+  worker(items[i], (err, data) => {
+    
+
+    results.push(data);
+    console.log('results', results)
+
+  });
+  console.log('results', results)
 }
 
-const start = Date.now();
-const duration = 100;
-
-sleep(duration, () => {
-    console.log('11');
-    const diff = Date.now() - start;
-    console.log(diff==duration);
-})
+console.log("Loop finished");

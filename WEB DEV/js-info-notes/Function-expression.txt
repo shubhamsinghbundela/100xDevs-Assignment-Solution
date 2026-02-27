@@ -1,0 +1,31 @@
+Function Expression vs Function Declaration
+
+1. Function Declaration: a function, declared as a separate statement, in the main code flow:
+
+// Function Declaration
+function sum(a, b) {
+  return a + b;
+}
+
+Function Expression: a function, created inside an expression or inside another syntax construct. Here, the function is created on the right side of the “assignment expression” =:
+// Function Expression
+let sum = function(a, b) {
+  return a + b;
+};
+
+2. The more subtle difference is when a function is created by the JavaScript engine.
+
+A Function Expression is created when the execution reaches it and is usable only from that moment.
+sayHi("John"); // error!
+
+let sayHi = function(name) {  // (*) no magic any more
+  alert( `Hello, ${name}` );
+};
+
+A Function Declaration can be called earlier than it is defined.
+
+sayHi("John"); // Hello, John
+
+function sayHi(name) {
+  alert( `Hello, ${name}` );
+}

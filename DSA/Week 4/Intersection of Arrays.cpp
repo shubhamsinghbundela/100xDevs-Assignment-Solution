@@ -36,6 +36,8 @@ void solve(){
 
     int taken[m] = {false};
 
+    // here I Understand what happend for ex: arr1=[1,2,3,4] arr2=[1,3] // output :1,3
+    // i=0 1 j=0 1 cout<<1 I make taken[j]=true i=1 i.e. 2 j=0 1 (already taken) j=1 2
     for(int i=0; i<n; i++){
         for(int j=0; j<m; j++){
             if(arr[i] == arr2[j] and !taken[j]){
