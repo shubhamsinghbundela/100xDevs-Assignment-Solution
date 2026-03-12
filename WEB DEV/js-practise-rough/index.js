@@ -1,48 +1,53 @@
-function createWindowAggregator(windowSize, onWindowReady) {
-  let arr = [];
-  let l=0, r=windowSize-1;
-  return function(...args){
-     //On each new value, compute and emit the current average.
-    //  Before N values are received, compute the average
-     arr.push(...args);
-     if(arr.length<windowSize){
-        let sum = 0;
-        for(let i=0; i<arr.length;i++){
-            sum+=arr[i];
-        }
+class Mutex {
+  constructor() {
+    this.queue = [];
+    this.active = 0;
+  }
 
-        let avg = sum/arr.length;
-        onWindowReady(avg);
-     }else{
-       while(r<arr.length){
-        // console.log(r);
-          let sum = 0;
-          for(let i=l; i<=r; i++){
-            sum+=arr[i];
+  lock(task, onComplete) {
+      this.queue.push({ task, onComplete });
+      this._release();
+  }
+
+  _release() {
+      while(this.active<1 && this.queue.length>0){
+        const { task, onComplete } = this.queue.shift();
+        this.active++;
+        task((err, data) => {
+          // decrease running after finishes
+          this.active--;
+  
+          if (onComplete) {
+            if(err){
+              console.log(err);
+              err.message=err;
+              onComplete(err);
+            }else{
+               onComplete(err, data);
+            }
           }
-          console.log(sum);
-
-          let avg =  sum/windowSize;
-          onWindowReady(avg);
-          l+=1;
-          r+=1;
-       }
-     }
+          // trigger next
+          this._release();
+        });
+      }
   }
 }
 
+const mutex = new Mutex();
 const results = [];
-    
-    const onWindowReady = (avg) => {
-      results.push(avg);
-      if (results.length === 4) {
-        console.log(results);
-      }
-    };
 
-    const add = createWindowAggregator(3, onWindowReady);
+ mutex.lock(
+   (cb) => setTimeout(() => cb(new Error("A_FAILED")), 10),
+  //  (err) => {
+  //    console.log(err);
+  //  }
+ );
 
-    add(1);
-    add(2);
-    add(3);
-    add(10);
+ mutex.lock(
+  (cb) => setTimeout(() => cb(null, "TASK_B"), 10),
+  (err, data) => {
+    results.push(data);
+
+    console.log('results', results);
+  }
+);
