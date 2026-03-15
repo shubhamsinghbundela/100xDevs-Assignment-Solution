@@ -1,53 +1,54 @@
-class Mutex {
-  constructor() {
-    this.queue = [];
-    this.active = 0;
+class LeakyBucket {
+  constructor(capacity, leakRateMs) {
+    this.capacity = capacity;
+    this.leakRateMs = leakRateMs;
+    this.bucket = []; // bucket capacity = this.capacity i.e. The bucket has a maximum capacity
+    this.timer = null;
   }
 
-  lock(task, onComplete) {
-      this.queue.push({ task, onComplete });
-      this._release();
-  }
-
-  _release() {
-      while(this.active<1 && this.queue.length>0){
-        const { task, onComplete } = this.queue.shift();
-        this.active++;
-        task((err, data) => {
-          // decrease running after finishes
-          this.active--;
-  
-          if (onComplete) {
-            if(err){
-              console.log(err);
-              err.message=err;
-              onComplete(err);
-            }else{
-               onComplete(err, data);
-            }
-          }
-          // trigger next
-          this._release();
-        });
+  add(task, onComplete) {
+    // If the bucket is full, new tasks must be rejected immediately
+    // Lets fill bucket until buket full
+    if(this.bucket.length===this.capacity){
+      task((err,data)=>{
+        err={}
+        err.message = "Rate Limit Exceeded"
+        onComplete(err);
+      })
+    }
+    if(this.bucket.length<this.capacity){
+      this.bucket.push({task, onComplete})
+      if (!this.timer) {
+        this.timer = setInterval(() => this._process(), this.leakRateMs);
       }
+    }
+  }
+
+  _process() {
+    // console.log(this.bucket)
+    if (this.bucket.length === 0) {
+      clearInterval(this.timer);
+      this.timer = null;
+      return;
+    }
+    const {task, onComplete} = this.bucket?.shift();
+    console.log(task);
+    task((err, data)=>{
+       onComplete(err, data);
+       if(this.bucket.length==0){
+        clearInterval(this._process)
+       }
+    })
   }
 }
 
-const mutex = new Mutex();
-const results = [];
 
- mutex.lock(
-   (cb) => setTimeout(() => cb(new Error("A_FAILED")), 10),
-  //  (err) => {
-  //    console.log(err);
-  //  }
- );
+const bucket = new LeakyBucket(1, 50);
 
- mutex.lock(
-  (cb) => setTimeout(() => cb(null, "TASK_B"), 10),
-  (err, data) => {
-    results.push(data);
+    const slowTask = (cb) => setTimeout(() => cb(null), 100);
 
-    console.log('results', results);
-  }
-);
+    bucket.add(slowTask, () => {});
+
+    bucket.add(slowTask, (err) => {
+      console.log(err);
+    });
