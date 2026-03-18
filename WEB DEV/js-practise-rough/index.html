@@ -6,6 +6,25 @@
     <title>Document</title>
 </head>
 <body>
-    <script src="./index.js"></script>
+    <label for="input1">Input1</label>
+    <input type="text" id="input1">
+    <label for="input2">Input2</label>
+    <input type="text" id="input2">
+    <button id="sum">Sum</button>
+    <div id="display"></div>
+    <script>
+        let sumButton = document.querySelector('#sum');
+        sumButton.addEventListener('click', (e)=>{
+            console.log('e', e);
+            // let input1 = document.querySelector('#input1').value;
+            // let input2 = document.querySelector('#input2').value;
+            // let sum = Number(input1) + Number(input2);
+            // document.querySelector('#display').innerText = sum;
+            // const displayDiv = document.createElement('div');
+            // displayDiv.setAttribute('id', 'display');
+            // displayDiv.innerHTML = sum;
+            // document.body.appendChild(displayDiv);
+        })
+    </script>
 </body>
 </html>
